@@ -1,5 +1,4 @@
 // src/components/Banner.tsx
-import React from 'react';
 import hero from '../assets/hero.jpeg';
 
 const Banner = () => {

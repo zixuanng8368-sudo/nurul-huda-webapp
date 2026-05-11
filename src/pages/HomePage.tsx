@@ -17,8 +17,6 @@ import EventsSection from '../components/EventsSection';
   };
 
 const HomePage: React.FC = () => {
-  const [selectedPrayerDay] = useState<'today' | 'tomorrow'>('today');
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Banner Section */}
