@@ -11,7 +11,7 @@ function App() {
       
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/nurul-huda" element={<HomePage />} />
+        
         {/* This helps debug: */}
         <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
