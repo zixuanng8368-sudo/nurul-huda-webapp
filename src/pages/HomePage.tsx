@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import PrayerTimesCarousel from '../components/PrayerTimesCarousel';
 import Banner from '../components/Banner';
-import EventCard from '../components/EventCard';
 import MasjidLocation from '../components/MasjidLocation';
 import EventsSection from '../components/EventsSection';
 
