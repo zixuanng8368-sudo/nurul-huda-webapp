@@ -18,14 +18,14 @@ interface RawPrayerData {
   isha: number;
 }
 
-// ─── Helper: Unix timestamp (seconds) → "HH:MM" in Malaysia Time ─────────────
+// ─── Helper: Unix timestamp (seconds) → "h:mm am/pm" in Malaysia Time ────────
 
 function unixToMYT(unixSeconds: number): string {
   return new Date(unixSeconds * 1000).toLocaleTimeString('en-MY', {
     timeZone: 'Asia/Kuala_Lumpur',
-    hour: '2-digit',
+    hour: 'numeric',   // no leading zero e.g. "5:30" not "05:30"
     minute: '2-digit',
-    hour12: false,
+    hour12: true,      // am/pm
   });
 }
 
@@ -58,7 +58,6 @@ const PrayerTimesCarousel: React.FC = () => {
 
         if (!todayRaw) throw new Error('No data for today');
 
-        // Convert Unix timestamps → "HH:MM" strings in MYT
         const mapped: Prayer[] = [
           { name: 'Subuh',   time: unixToMYT(todayRaw.fajr)    },
           { name: 'Syuruk',  time: unixToMYT(todayRaw.syuruk)  },
@@ -70,13 +69,18 @@ const PrayerTimesCarousel: React.FC = () => {
 
         setPrayers(mapped);
 
-        // Find next prayer using actual current time
-        const now = new Date();
-        const currentMinutes = now.getHours() * 60 + now.getMinutes();
-        const upcomingIndex = mapped.findIndex(({ time }) => {
-          const [h, m] = time.split(':').map(Number);
-          return h * 60 + m > currentMinutes;
-        });
+        // Compare raw Unix timestamps directly — no string parsing needed
+        const prayerTimestamps = [
+          todayRaw.fajr,
+          todayRaw.syuruk,
+          todayRaw.dhuhr,
+          todayRaw.asr,
+          todayRaw.maghrib,
+          todayRaw.isha,
+        ];
+
+        const nowInSeconds = Date.now() / 1000;
+        const upcomingIndex = prayerTimestamps.findIndex((ts) => ts > nowInSeconds);
         const idx = upcomingIndex === -1 ? 0 : upcomingIndex;
         setNextPrayerIndex(idx);
         setScrollIndex(idx);
@@ -179,7 +183,7 @@ const PrayerTimesCarousel: React.FC = () => {
                     </span>
                   )}
                 </h3>
-                <p className="text-5xl font-black mt-4">{prayer.time}</p>
+                <p className="text-5xl font-black text-black mt-4">{prayer.time}</p>
               </div>
             ))}
           </div>
