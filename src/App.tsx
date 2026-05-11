@@ -11,13 +11,9 @@ function App() {
       <Navbar /> {/* Navbar stays visible on all pages */}
       
       <Routes>
-        {/* URL: localhost:3000/ */}
-        {/* <Route path="/" element={<HomePage />} /> */}
-        
+        {/* URL: localhost:3000/ */}        
         <Route path="/nurul-huda" element={<HomePage />} />
 
-        {/* URL: localhost:3000/test */}
-        <Route path="/test" element={<TestPage />} />
       </Routes>
     </Router>
   );
