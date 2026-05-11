@@ -4,18 +4,6 @@ import Banner from '../components/Banner';
 import MasjidLocation from '../components/MasjidLocation';
 import EventsSection from '../components/EventsSection';
 
-// Prayer times data
-  const prayerTimes = {
-    today: [
-      { name: 'Subuh', time: '05:30' },
-      { name: 'Dhuha', time: '07:00' },
-      { name: 'Zohor', time: '12:45' },
-      { name: 'Asar', time: '15:30' },
-      { name: 'Maghrib', time: '18:15' },
-      { name: 'Isyak', time: '19:45' },
-    ]
-  };
-
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -23,7 +11,7 @@ const HomePage: React.FC = () => {
       <Banner />
 
       {/* Prayer Times Section */}
-    <PrayerTimesCarousel prayerTimes={prayerTimes} />
+    <PrayerTimesCarousel />
 
       {/* About Mosque Section */}
       <section className="py-12 px-4 bg-gray-50">

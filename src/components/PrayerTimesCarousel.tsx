@@ -1,88 +1,144 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Prayer {
   name: string;
   time: string;
 }
 
-interface PrayerTimesCarouselProps {
-  prayerTimes: {
-    today: Prayer[];
-  };
+interface RawPrayerData {
+  day: number;
+  hijri: string;
+  fajr: number;
+  syuruk: number;
+  dhuhr: number;
+  asr: number;
+  maghrib: number;
+  isha: number;
 }
 
-const PrayerTimesCarousel: React.FC<PrayerTimesCarouselProps> = ({ prayerTimes }) => {
-  // nextPrayerIndex: locked to the actual next prayer — never changes on drag
+// ─── Helper: Unix timestamp (seconds) → "HH:MM" in Malaysia Time ─────────────
+
+function unixToMYT(unixSeconds: number): string {
+  return new Date(unixSeconds * 1000).toLocaleTimeString('en-MY', {
+    timeZone: 'Asia/Kuala_Lumpur',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+const PrayerTimesCarousel: React.FC = () => {
+  const [prayers, setPrayers] = useState<Prayer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
   const [nextPrayerIndex, setNextPrayerIndex] = useState(0);
-  // scrollIndex: tracks which card the carousel is scrolled to
   const [scrollIndex, setScrollIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  const CARD_WIDTH = 320; // card min-width (300) + gap (20)
+  const CARD_WIDTH = 320;
 
-  // Find the next upcoming prayer on mount and scroll carousel to it
   useEffect(() => {
-    const now = new Date();
-    const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+    const fetchTimes = async () => {
+      try {
+        const response = await fetch('https://api.waktusolat.app/v2/solat/SBH07');
+        const json = await response.json();
 
-    const upcomingIndex = prayerTimes.today.findIndex((prayer) => {
-      const [hours, minutes] = prayer.time.split(':').map(Number);
-      return hours * 60 + minutes > currentTimeInMinutes;
-    });
+        const today = new Date().getDate();
+        const todayRaw: RawPrayerData | undefined = json.prayers.find(
+          (p: RawPrayerData) => p.day === today
+        );
 
-    const idx = upcomingIndex === -1 ? 0 : upcomingIndex;
-    setNextPrayerIndex(idx);
-    setScrollIndex(idx);
-  }, [prayerTimes]);
+        if (!todayRaw) throw new Error('No data for today');
 
-  const translateX = -(scrollIndex * CARD_WIDTH) + dragOffset;
+        // Convert Unix timestamps → "HH:MM" strings in MYT
+        const mapped: Prayer[] = [
+          { name: 'Subuh',   time: unixToMYT(todayRaw.fajr)    },
+          { name: 'Syuruk',  time: unixToMYT(todayRaw.syuruk)  },
+          { name: 'Zuhur',   time: unixToMYT(todayRaw.dhuhr)   },
+          { name: 'Asar',    time: unixToMYT(todayRaw.asr)     },
+          { name: 'Maghrib', time: unixToMYT(todayRaw.maghrib) },
+          { name: 'Isyak',   time: unixToMYT(todayRaw.isha)    },
+        ];
 
-  // --- Mouse handlers ---
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setDragStartX(e.clientX);
-  };
+        setPrayers(mapped);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setDragOffset(e.clientX - dragStartX);
-  };
+        // Find next prayer using actual current time
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        const upcomingIndex = mapped.findIndex(({ time }) => {
+          const [h, m] = time.split(':').map(Number);
+          return h * 60 + m > currentMinutes;
+        });
+        const idx = upcomingIndex === -1 ? 0 : upcomingIndex;
+        setNextPrayerIndex(idx);
+        setScrollIndex(idx);
+      } catch (err) {
+        console.error('Error fetching solat times:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleMouseUp = () => {
-    if (!isDragging) return;
-    commitDrag();
-  };
+    fetchTimes();
+  }, []);
 
-  // --- Touch handlers ---
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    setDragStartX(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    setDragOffset(e.touches[0].clientX - dragStartX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!isDragging) return;
-    commitDrag();
-  };
-
+  // ── Drag handlers ───────────────────────────────────────────────────────────
   const commitDrag = () => {
     const threshold = CARD_WIDTH / 3;
-    if (dragOffset < -threshold) {
-      setScrollIndex((i) => Math.min(i + 1, prayerTimes.today.length - 1));
-    } else if (dragOffset > threshold) {
+    if (dragOffset < -threshold)
+      setScrollIndex((i) => Math.min(i + 1, prayers.length - 1));
+    else if (dragOffset > threshold)
       setScrollIndex((i) => Math.max(i - 1, 0));
-    }
     setIsDragging(false);
     setDragOffset(0);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => { setIsDragging(true); setDragStartX(e.clientX); };
+  const handleMouseMove = (e: React.MouseEvent) => { if (isDragging) setDragOffset(e.clientX - dragStartX); };
+  const handleMouseUp   = () => { if (isDragging) commitDrag(); };
+
+  const handleTouchStart = (e: React.TouchEvent) => { setIsDragging(true); setDragStartX(e.touches[0].clientX); };
+  const handleTouchMove  = (e: React.TouchEvent) => { if (isDragging) setDragOffset(e.touches[0].clientX - dragStartX); };
+  const handleTouchEnd   = () => { if (isDragging) commitDrag(); };
+
+  const translateX = -(scrollIndex * CARD_WIDTH) + dragOffset;
+
+  // ── Loading state ───────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">Waktu Solat Hari Ini</h2>
+          <div className="flex gap-4 overflow-hidden">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="min-w-[300px] rounded-2xl p-8 bg-gray-100 animate-pulse h-40" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ── Error state ─────────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <section className="py-12 px-4 bg-white text-center">
+        <h2 className="text-4xl font-bold text-gray-900 mb-4">Waktu Solat Hari Ini</h2>
+        <p className="text-red-500">Gagal memuatkan waktu solat. Sila cuba lagi.</p>
+      </section>
+    );
+  }
+
+  // ── Main render ─────────────────────────────────────────────────────────────
   return (
     <section className="py-12 px-4 bg-white overflow-hidden">
       <div className="max-w-6xl mx-auto">
@@ -90,7 +146,6 @@ const PrayerTimesCarousel: React.FC<PrayerTimesCarouselProps> = ({ prayerTimes }
           Waktu Solat Hari Ini
         </h2>
 
-        {/* Carousel Container */}
         <div className="relative overflow-hidden">
           <div
             ref={trackRef}
@@ -107,7 +162,7 @@ const PrayerTimesCarousel: React.FC<PrayerTimesCarouselProps> = ({ prayerTimes }
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {prayerTimes.today.map((prayer, index) => (
+            {prayers.map((prayer, index) => (
               <div
                 key={index}
                 className={`min-w-[300px] rounded-2xl p-8 text-center border transition-all duration-300 ${
@@ -116,11 +171,7 @@ const PrayerTimesCarousel: React.FC<PrayerTimesCarouselProps> = ({ prayerTimes }
                     : 'bg-gray-50 text-gray-800 border-gray-200 opacity-60'
                 }`}
               >
-                <h3
-                  className={`text-lg font-semibold ${
-                    index === nextPrayerIndex ? 'text-blue-100' : 'text-gray-500'
-                  }`}
-                >
+                <h3 className={`text-lg font-semibold ${index === nextPrayerIndex ? 'text-blue-100' : 'text-gray-500'}`}>
                   {prayer.name}
                   {index === nextPrayerIndex && (
                     <span className="ml-2 text-xs bg-white text-blue-600 px-2 py-1 rounded-full">
@@ -134,9 +185,8 @@ const PrayerTimesCarousel: React.FC<PrayerTimesCarouselProps> = ({ prayerTimes }
           </div>
         </div>
 
-        {/* Navigation Dots */}
         <div className="flex justify-center gap-2 mt-8">
-          {prayerTimes.today.map((_, i) => (
+          {prayers.map((_, i) => (
             <button
               key={i}
               onClick={() => setScrollIndex(i)}
@@ -149,7 +199,7 @@ const PrayerTimesCarousel: React.FC<PrayerTimesCarouselProps> = ({ prayerTimes }
 
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-sm italic">
-            ⏰ Waktu solat di atas adalah untuk Wilayah Kuala Lumpur.
+            ⏰ Waktu solat di atas adalah untuk Zon SBH07 (Kota Kinabalu & Sekitarnya).
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@ const Banner = () => {
         className="absolute inset-0 w-full h-full object-cover opacity-60"
       />
       <div className="relative z-10 text-center text-white px-4">
-        <h1 className="text-4xl md:text-6xl font-bold">Selamat Datang</h1>
+        <h1 className="text-4xl md:text-6xl font-bold text-white">Selamat Datang</h1>
         <p className="mt-4 text-lg md:text-xl text-gray-200">Menyemai Taqwa, Memperkasa Ummah</p>
       </div>
     </section>
