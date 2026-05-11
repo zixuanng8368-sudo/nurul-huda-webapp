@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PrayerTimesCarousel from '../components/PrayerTimesCarousel';
 import Banner from '../components/Banner';
 import MasjidLocation from '../components/MasjidLocation';
