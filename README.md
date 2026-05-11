@@ -1,4 +1,60 @@
-# React + TypeScript + Vite
+# Nurul Huda Webapp
+
+A React + TypeScript + Vite web application integrated with Supabase.
+
+## Deploying to Vercel
+
+### Prerequisites
+1. A [Vercel account](https://vercel.com/signup)
+2. Your GitHub, GitLab, or Bitbucket repository connected to Vercel
+3. Supabase credentials (URL and anon key)
+
+### Step-by-Step Deployment
+
+1. **Push to Git Repository**
+   ```bash
+   git add .
+   git commit -m "Prepare for Vercel deployment"
+   git push origin main
+   ```
+
+2. **Connect to Vercel**
+   - Go to [https://vercel.com/new](https://vercel.com/new)
+   - Import your repository
+   - Vercel will auto-detect your settings
+
+3. **Set Environment Variables**
+   In Vercel project settings, add these environment variables:
+   - `VITE_SUPABASE_URL` - Your Supabase project URL
+   - `VITE_SUPABASE_PUBLISHABLE_KEY` - Your Supabase anon key
+
+4. **Deploy**
+   - Click "Deploy"
+   - Your app will be live at `your-project.vercel.app`
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
+
+# Run dev server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm preview
+```
+
+---
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
