@@ -10,9 +10,10 @@ function App() {
       <Navbar /> {/* Navbar stays visible on all pages */}
       
       <Routes>
-        {/* URL: localhost:3000/ */}        
+        <Route path="/" element={<HomePage />} />
         <Route path="/nurul-huda" element={<HomePage />} />
-
+        {/* This helps debug: */}
+        <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
     </Router>
   );
