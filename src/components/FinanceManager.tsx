@@ -63,7 +63,7 @@ const formatMoney = (n: number)   => `RM ${n.toLocaleString('en-MY', { minimumFr
 
 // ─── Shared UI helpers ────────────────────────────────────────────────────────
 
-const inputCls = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500';
+const inputCls = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white';
 
 const Field = ({ label, required = false, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
   <div>
