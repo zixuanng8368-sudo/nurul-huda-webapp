@@ -11,7 +11,7 @@ dotenv.config({ path: path.resolve(__dirname, ".env.local") });
 (async () => {
   // NOW import modules that depend on env vars
   const express = (await import("express")).default;
-  const { auth } = await import("./src/lib/auth");
+  const { auth } = await import("src/lib/auth");
   const { toNodeHandler } = await import("better-auth/node");
   const cors = (await import("cors")).default;
   const { createClient } = await import("@supabase/supabase-js");
@@ -31,14 +31,14 @@ dotenv.config({ path: path.resolve(__dirname, ".env.local") });
     credentials: true,
   }));
 
-  // JSON middleware
-  app.use(express.json());
-
+  
   // AUTH ROUTES (BEFORE body parser)
   app.all("/api/auth/*", (req, res, next) => {
     console.log(`[AUTH] ${req.method} ${req.path}`);
     toNodeHandler(auth)(req, res, next);
   });
+  
+  app.use(express.json());
 
   // Error handling middleware for auth
   app.use((err, req, res, next) => {
