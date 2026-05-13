@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { passwordSchema } from "../../lib/validation";
-import {
-  Chrome,
-  Facebook,
-  KeyRound,
-} from "lucide-react";
+
+import { 
+  GlobeAltIcon, 
+  UserGroupIcon, 
+  KeyIcon 
+} from "@heroicons/react/24/outline";
 
 const loginSchema = z.object({
   email: z.email("Invalid email address"),
@@ -150,7 +151,7 @@ const LoginCard = () => {
               callbackURL: "/",
             })}
           >
-            <Chrome size={20} />
+            <GlobeAltIcon className="w-5 h-5 text-gray-600" />
             <span className="font-medium">Continue with Google (Coming soon)</span>
           </button>
 
@@ -164,7 +165,7 @@ const LoginCard = () => {
               callbackURL: "/",
             })}
           >
-            <Facebook size={20} />
+            <GlobeAltIcon className="w-5 h-5 text-gray-600" />
             <span className="font-medium">Continue with Facebook (Coming soon)</span>
           </button>
 
@@ -174,8 +175,7 @@ const LoginCard = () => {
             disabled
             className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 bg-gray-100 text-gray-400 cursor-not-allowed"
           >
-            <KeyRound size={20} />
-
+            <KeyIcon className="w-5 h-5" />
             <span className="font-medium">Passkey (Coming Soon)</span>
           </button>
         </div>

@@ -4,8 +4,9 @@ import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/authentication/LoginPage';
 import SignUpPage from './pages/authentication/SignUpPage';
-import { useSession } from './lib/auth-client';
 import FinancePage from './pages/FinancePage';
+import { useSession } from './lib/auth-client';
+import EventPage from './pages/EventPage';
 
 function App() {
   const { data: session, isPending } = useSession();
@@ -25,6 +26,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/admin" element={session ? <AdminPage /> : <Navigate to="/login" />} />
+        <Route path="/admin/events" element={session ? <EventPage /> : <Navigate to ="/login" />} />
         <Route path="/admin/finance" element={session ? <FinancePage /> : <Navigate to ="/login" />} />
         <Route path="/login" element={!session ? <LoginPage /> : <Navigate to="/" />} />
         <Route path="/signup" element={!session ? <SignUpPage /> : <Navigate to="/" />} />
