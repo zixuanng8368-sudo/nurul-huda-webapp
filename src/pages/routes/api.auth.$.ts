@@ -1,4 +1,4 @@
-import { auth } from '../../../api/auth/better-auth' // Adjust the path as necessary
+import { auth } from '../../lib/auth'
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router" // or "@remix-run/node"
 
 export async function loader({ request }: LoaderFunctionArgs) {
