@@ -1,8 +1,6 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/auth/(.*)", "destination": "/api/auth/[...auth].ts" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
