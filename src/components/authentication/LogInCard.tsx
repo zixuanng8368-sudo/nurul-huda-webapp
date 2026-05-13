@@ -8,7 +8,6 @@ import { passwordSchema } from "../../lib/validation";
 
 import { 
   GlobeAltIcon, 
-  UserGroupIcon, 
   KeyIcon 
 } from "@heroicons/react/24/outline";
 
