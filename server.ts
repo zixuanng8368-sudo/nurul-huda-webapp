@@ -11,7 +11,7 @@ dotenv.config({ path: path.resolve(__dirname, ".env.local") });
 (async () => {
   // NOW import modules that depend on env vars
   const express = (await import("express")).default;
-  const { auth } = await import("src/lib/auth");
+  const { auth } = await import("./src/lib/auth");
   const { toNodeHandler } = await import("better-auth/node");
   const cors = (await import("cors")).default;
   const { createClient } = await import("@supabase/supabase-js");
