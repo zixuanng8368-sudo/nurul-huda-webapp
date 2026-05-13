@@ -9,7 +9,6 @@ import { passwordSchema } from "../lib/validation";
 
 import { 
   GlobeAltIcon, 
-  KeyIcon 
 } from "@heroicons/react/24/outline";
 
 const loginSchema = z.object({
