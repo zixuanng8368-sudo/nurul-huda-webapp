@@ -198,6 +198,7 @@ a {
   color: var(--primary);
   text-decoration: none;
   transition: color 0.2s ease;
+  touch-action: manipulation;
 }
 
 a:hover {
@@ -212,6 +213,7 @@ button {
   cursor: pointer;
   border: none;
   transition: all 0.2s ease;
+  touch-action: manipulation;
 }
 
 .btn {
