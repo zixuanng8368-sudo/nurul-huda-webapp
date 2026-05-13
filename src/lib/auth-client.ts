@@ -1,13 +1,14 @@
 import { createAuthClient } from "better-auth/react";
-
 import { adminClient } from "better-auth/client/plugins";
-
 import { ac, user, admin, financeadmin, superadmin } from "./permissions";
 
 const getBaseURL = () => {
-  // If we are on Vercel, use the Vercel URL, otherwise use localhost
-  if (import.meta.env.VITE_AUTH_URL) return import.meta.env.VITE_AUTH_URL;
-  return "http://localhost:3001";
+  // If we are in production (on Vercel), use the relative path /api/auth
+  // If we are in development, use the local dev server
+  if (import.meta.env.PROD) {
+    return "https://nurul-huda-webapp-qg0jp7qa8-cdr-jies-projects.vercel.app";
+  }
+  return "http://localhost:3001"; // Or whatever your local port is
 };
 
 export const authClient = createAuthClient({

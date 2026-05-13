@@ -6,34 +6,42 @@ import { ac, admin, financeadmin, superadmin, user } from "./permissions";
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
-    // Add SSL for Supabase production connections
+    // SSL is required for Supabase/Neon in production
     ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
   }),
+  
+  // CRITICAL: Must be the full URL to the API folder
   baseURL: process.env.BETTER_AUTH_URL, 
+  
   secret: process.env.BETTER_AUTH_SECRET,
+  
   trustedOrigins: [
     "http://localhost:5173",
-    "https://nurul-huda-webapp-3b5qis8xl-cdr-jies-projects.vercel.app", // Add your Vercel URL
+    "http://localhost:5174",
+    // Add all current Vercel preview/production URLs
+    "https://nurul-huda-webapp-3b5qis8xl-cdr-jies-projects.vercel.app",
+    "https://nurul-huda-webapp-qg0jp7qa8-cdr-jies-projects.vercel.app",
   ],
+
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
   },
+
   session: {
     expiresIn: 60 * 60 * 24 * 3, // 3 days
-    updateAge: 60 * 60 * 24, // 1 days
+    updateAge: 60 * 60 * 24, // 1 day
     cookieCache: {
       enabled: true,
-      maxAge: 60 // 10 seconds
+      maxAge: 60 
     }
   },
-  socialProviders: {
-    
-  },
-  plugins:[adminPlugin({
-    ac,
-    roles: { user, admin, financeadmin, superadmin },
-    adminRoles: ["admin", "financeadmin", "superadmin"]
-  }
-  )],
+
+  plugins: [
+    adminPlugin({
+      ac,
+      roles: { user, admin, financeadmin, superadmin },
+      adminRoles: ["admin", "financeadmin", "superadmin"]
+    })
+  ],
 });
