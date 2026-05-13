@@ -412,7 +412,7 @@ const EventsManager = () => {
       {/* ── Add / Edit Modal ───────────────────────────────────────────────── */}
       {modal.open && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-xl max-h-[92dvh] flex flex-col">
+          <div className="bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-xl max-h-[92dvh] flex flex-col overflow-x-hidden">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0">
               <h2 className="text-lg font-bold text-gray-800">
                 {modal.editing ? 'Kemaskini Acara' : 'Tambah Acara Baru'}
@@ -422,7 +422,7 @@ const EventsManager = () => {
               </button>
             </div>
 
-            <div className="overflow-y-auto p-5 space-y-4 flex-1">
+            <div className="overflow-y-auto overflow-x-hidden px-4 sm:px-5 py-5 space-y-4 flex-1">
               <Field label="Tajuk Acara" required>
                 <input className={inputCls} placeholder="cth. Kuliah Subuh"
                   value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />

@@ -208,6 +208,8 @@ a:hover {
 /* ============================================
    5. BUTTONS
    ============================================ */
+
+
 button {
   font-family: inherit;
   cursor: pointer;
@@ -266,7 +268,7 @@ input[type="password"]:focus,
 textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(18, 19, 21, 0);
+  box-shadow: 0 0 0 3px rgba(148, 169, 210, 0);
 }
 
 /* ============================================
