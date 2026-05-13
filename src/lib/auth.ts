@@ -3,6 +3,11 @@ import { admin as adminPlugin } from "better-auth/plugins"
 import { Pool } from "pg";
 import { ac, admin, financeadmin, superadmin, user } from "./permissions";
 
+// Log that auth is initializing
+console.log("[AUTH] Initializing with DATABASE_URL:", process.env.DATABASE_URL ? "✓ Set" : "✗ Not set");
+console.log("[AUTH] BETTER_AUTH_SECRET:", process.env.BETTER_AUTH_SECRET ? "✓ Set" : "✗ Not set");
+console.log("[AUTH] BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL || "using default");
+
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -11,9 +16,9 @@ export const auth = betterAuth({
   }),
   
   // CRITICAL: Must be the full URL to the API folder
-  baseURL: import.meta.env.VITE_APP_URL + "/api/auth", 
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001/api/auth",
   
-  secret: import.meta.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET,
   
   trustedOrigins: [
     'https://nurul-huda-webapp-one.vercel.app',

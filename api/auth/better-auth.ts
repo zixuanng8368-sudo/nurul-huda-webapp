@@ -11,7 +11,7 @@ export const auth = betterAuth({
   }),
   
   // CRITICAL: Must be the full URL to the API folder
-  baseURL: import.meta.env.VITE_APP_URL + "/api/auth", 
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000/api/auth", 
   
   secret: import.meta.env.BETTER_AUTH_SECRET,
   

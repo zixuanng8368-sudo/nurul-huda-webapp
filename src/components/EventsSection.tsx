@@ -56,9 +56,9 @@ const EventsSection: React.FC = () => {
       setError(null);
 
       try {
-        // TODO: Replace with your actual events API endpoint
-        // For now, showing a placeholder message
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/events`);
+        // Fetch from the backend API endpoint
+        const apiUrl = import.meta.env.VITE_API_URL || `${window.location.origin}`;
+        const response = await fetch(`${apiUrl}/api/events`);
         
         if (!response.ok) {
           setError('Acara sedang dimuat. Sila cuba lagi kemudian.');
