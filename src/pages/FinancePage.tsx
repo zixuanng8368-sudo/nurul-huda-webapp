@@ -1,15 +1,5 @@
+import FinanceManager from "../components/FinanceManager";
 
-import FinanceDashboard from "../components/FinanceDashboard";
-
-
-const FinancePage = () => {
-    return (
-        <div>
-            FinancePage
-            <FinanceDashboard />
-        </div>
-    )
-}
-
+const FinancePage = () => <FinanceManager />;
 
 export default FinancePage;

@@ -24,6 +24,7 @@ export const rolePermissions = {
     user: ["create", "list", "set-role", "ban", "delete", "set-password"],
     session: ["list", "revoke", "delete"],
     event: ["create", "view", "share", "update", "delete"],
+    finance: ["create", "view", "share", "update", "delete"],
   },
   [ROLES.FINANCE_ADMIN]: {
     user: ["create", "list", "set-role", "ban", "delete", "set-password"],
