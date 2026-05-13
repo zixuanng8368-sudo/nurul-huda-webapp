@@ -1,3 +1,6 @@
+/*Testing debug*/
+console.log('APP URL:', import.meta.env.VITE_APP_URL)
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';

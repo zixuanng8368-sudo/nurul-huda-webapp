@@ -1,10 +1,11 @@
 import { auth } from "../../src/lib/auth";
 import { toNodeHandler } from "better-auth/node";
 
-/**
- * The [...all].ts filename is a "catch-all" segment.
- * It ensures that GET /api/auth/get-session 
- * and POST /api/auth/sign-in/email
- * are all handled by this one function.
- */
+// This is the magic fix for 405/Body errors on Vercel
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export default toNodeHandler(auth);
