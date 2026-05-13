@@ -1,7 +1,7 @@
 // api/index.ts
 import express from "express";
 import cors from "cors";
-import { auth } from "../src/lib/auth";
+import { auth } from "../src/lib/auth.js";
 import { toNodeHandler } from "better-auth/node";
 import { createClient } from "@supabase/supabase-js";
 
