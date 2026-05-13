@@ -1,5 +1,5 @@
 // api/auth/[...auth].ts
-import { auth } from "../../src/lib/auth"; // Adjust path to your auth config
+import { auth } from "./better-auth"; // No more ../../src/lib/
 import { toNodeHandler } from "better-auth/node";
 
 export default toNodeHandler(auth);

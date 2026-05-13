@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { admin as adminPlugin } from "better-auth/plugins"
 import { Pool } from "pg";
-import { ac, admin, financeadmin, superadmin, user } from "./permissions";
+import { ac, admin, financeadmin, superadmin, user } from "../../src/lib/permissions";
 
 export const auth = betterAuth({
   database: new Pool({
