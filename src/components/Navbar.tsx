@@ -1,12 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useSession, signOut } from '../lib/auth-client';
-
+import { useSession,authClient } from '../lib/auth-client';
 const Navbar = () => {
   const { data: session } = useSession();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await signOut();
+    await authClient.signOut();
     navigate('/');
   };
 
