@@ -3,12 +3,12 @@ import { adminClient } from "better-auth/client/plugins";
 import { ac, user, admin, financeadmin, superadmin } from "./permissions";
 
 const getBaseURL = () => {
-  // If we are in production (on Vercel), use the relative path /api/auth
-  // If we are in development, use the local dev server
   if (import.meta.env.PROD) {
-    return "https://nurul-huda-webapp-qg0jp7qa8-cdr-jies-projects.vercel.app";
+    // This ensures it always talks to the CURRENT deployment, 
+    // not a hardcoded old one.
+    return window.location.origin; 
   }
-  return "http://localhost:3001"; // Or whatever your local port is
+  return "http://localhost:3001";
 };
 
 export const authClient = createAuthClient({
