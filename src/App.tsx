@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
+import EventPage from './pages/EventPage';
 
 
 function App() {
@@ -15,18 +16,20 @@ function App() {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-  // Check active sessions
+  //Check active sessions
   supabase.auth.getSession().then(({ data: { session } }) => {
     setSession(session);
   });
 
-  // Listen for changes on auth state (login/logout)
+
+  //Listen for changes on auth state (login/logout)
   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
     setSession(session);
   });
 
   return () => subscription.unsubscribe();
 }, []);
+
 
 // Inside your return/routes:
 
@@ -42,6 +45,9 @@ function App() {
         <Route path="/admin" element={session ? <AdminPage /> : <Navigate to="/login" />}  />
         
         <Route path="/login" element={<LoginPage />} />
+
+        <Route path="/admin/events" element={session ? <EventPage /> : <Navigate to="/login" />} /> 
+
         {/* This helps debug: */}
         <Route path="*" element={<div>Page Not Found</div>} />
 

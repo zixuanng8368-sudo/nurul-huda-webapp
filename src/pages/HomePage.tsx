@@ -3,6 +3,7 @@ import PrayerTimesCarousel from '../components/PrayerTimesCarousel';
 import Banner from '../components/Banner';
 import MasjidLocation from '../components/MasjidLocation';
 import EventsSection from '../components/EventsSection';
+import masjid from '../assets/masjid.jpeg';
 
 const HomePage: React.FC = () => {
   return (
@@ -48,7 +49,7 @@ const HomePage: React.FC = () => {
 
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1591088398332-8c716b89973f?w=600&h=400&fit=crop" 
+                src={masjid} 
                 alt="Masjid Kita" 
                 className="rounded-lg shadow-lg"
               />

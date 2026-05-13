@@ -1,62 +1,98 @@
-import { 
-  Calendar, 
-  Users, 
-  DollarSign, 
-  Bell, 
-  Image as ImageIcon,
-  LogOut 
-} from 'lucide-react'; // Assuming you use lucide-react for icons
+import { useNavigate } from 'react-router-dom';
+import {
+  CalendarIcon,
+  UsersIcon,
+  BanknotesIcon,
+  MegaphoneIcon,
+  PhotoIcon,
+  ArrowRightOnRectangleIcon,
+} from '@heroicons/react/24/outline';
+import { supabase } from '../supabaseClient';
 
-const AdminDashboard = () => {
-  const modules = [
-    { name: 'Waktu Solat', icon: <Calendar />, color: 'bg-blue-500', link: '/admin/solat' },
-    { name: 'Pengurusan Ahli', icon: <Users />, color: 'bg-emerald-500', link: '/admin/users' },
-    { name: 'Kewangan/Tabung', icon: <DollarSign />, color: 'bg-amber-500', link: '/admin/finance' },
-    { name: 'Pengumuman', icon: <Bell />, color: 'bg-purple-500', link: '/admin/announcements' },
-    { name: 'Galeri & Media', icon: <ImageIcon />, color: 'bg-rose-500', link: '/admin/gallery' },
-  ];
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Module {
+  name: string;
+  icon: React.ElementType;
+  color: string;
+  link: string;
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const MODULES: Module[] = [
+  { name: 'Acara Majlis',     icon: CalendarIcon,              color: 'bg-blue-500',    link: '/admin/events'         },
+  { name: 'Pengurusan Ahli', icon: UsersIcon,                 color: 'bg-emerald-500', link: '/admin/users'         },
+  { name: 'Kewangan/Tabung', icon: BanknotesIcon,             color: 'bg-amber-500',   link: '/admin/finance'       },
+  { name: 'Pengumuman',      icon: MegaphoneIcon,             color: 'bg-purple-500',  link: '/admin/announcements' },
+  { name: 'Galeri & Media',  icon: PhotoIcon,                 color: 'bg-rose-500',    link: '/admin/gallery'       },
+];
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+interface ModuleCardProps {
+  module: Module;
+  onClick: () => void;
+}
+
+const ModuleCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
+  const Icon = module.icon;
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all active:scale-95 h-36 md:h-44 text-center w-full"
+    >
+      <div className={`${module.color} w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl mb-3 shadow-sm`}>
+        <Icon className="text-white w-6 h-6 md:w-8 md:h-8" />
+      </div>
+      <h3 className="font-bold text-gray-800 text-xs md:text-base leading-tight">
+        {module.name}
+      </h3>
+      <p className="hidden md:block text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+        Open Module
+      </p>
+    </button>
+  );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+const AdminDashboard: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 pb-20">
-      {/* Header */}
       <header className="mb-8 flex justify-between items-center px-2">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Panel Admin</h1>
           <p className="text-sm text-gray-500">Nurul Huda Web App</p>
         </div>
-        <button className="p-2 text-gray-400 hover:text-red-500 transition">
-          <LogOut size={24} />
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 p-2 text-gray-400 hover:text-red-500 transition"
+        >
+          <ArrowRightOnRectangleIcon className="w-6 h-6" />
+          <span className="text-sm font-bold">Log Keluar</span>
         </button>
       </header>
 
-      {/* Stats Quick View (Optional) */}
-      <div className="grid grid-cols-2 gap-4 mb-8">
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-          <p className="text-xs text-gray-500 uppercase font-bold">Kutipan Jumaat</p>
-          <p className="text-xl font-bold text-gray-900">RM 1,240</p>
-        </div>
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-          <p className="text-xs text-gray-500 uppercase font-bold">Ahli Baru</p>
-          <p className="text-xl font-bold text-gray-900">+12</p>
-        </div>
-      </div>
-
-      {/* Module Buttons Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {modules.map((module, index) => (
-          <button
-            key={index}
-            onClick={() => window.location.href = module.link}
-            className="flex items-center p-6 bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all group active:scale-95"
-          >
-            <div className={`${module.color} p-4 rounded-2xl text-white mr-4 group-hover:scale-110 transition-transform`}>
-              {module.icon}
-            </div>
-            <div className="text-left">
-              <h3 className="font-bold text-gray-800 text-lg">{module.name}</h3>
-              <p className="text-xs text-gray-400">Kemaskini modul ini</p>
-            </div>
-          </button>
+      {/*
+        Mobile:  2 columns — 5 cards = 2 / 2 / 1 (last card centered via the wrapper below)
+        Tablet:  3 columns
+        Desktop: 5 columns
+      */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {MODULES.map((module) => (
+          <ModuleCard
+            key={module.link}
+            module={module}
+            onClick={() => navigate(module.link)}
+          />
         ))}
       </div>
     </div>
