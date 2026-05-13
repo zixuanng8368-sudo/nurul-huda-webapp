@@ -1,10 +1,5 @@
-import { auth } from '../../../api/auth/better-auth' // Adjust the path as necessary
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router" // or "@remix-run/node"
+// DEPRECATED: This file is no longer used with Supabase authentication.
+// Auth is now handled entirely by Supabase on the client side.
+// This file can be safely deleted.
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    return auth.handler(request)
-}
-
-export async function action({ request }: ActionFunctionArgs) {
-    return auth.handler(request)
-}
+export {};

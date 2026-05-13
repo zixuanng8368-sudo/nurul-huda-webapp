@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { authClient } from "../lib/auth-client";
+import { useSession } from "../lib/auth-client";
+import { hasPermission } from "../lib/permissions";
 
 const FinanceDashboard = () => {
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
 
@@ -15,13 +16,9 @@ const FinanceDashboard = () => {
         return;
       }
 
-      const { data } = await authClient.admin.hasPermission({
-        userId: session.user.id,
-        permissions: {
-          finance: ["view"],
-        },
-      });
-      setHasAccess(data?.success ?? false);
+      // Check if user has finance.view permission
+      const access = hasPermission(session.user, "finance", "view");
+      setHasAccess(access);
       setLoading(false);
     };
     checkPermission();

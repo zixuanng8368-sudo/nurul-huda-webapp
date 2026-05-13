@@ -1,7 +1,5 @@
 import "dotenv/config";
 import express from "express";
-import { auth } from "./src/lib/auth";
-import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 
 const app = express();
@@ -13,9 +11,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// AUTH ROUTES (BEFORE body parser)
-app.all("/api/auth/*", toNodeHandler(auth));
-
 // JSON middleware
 app.use(express.json());
 
@@ -25,5 +20,5 @@ app.get("/health", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Auth server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

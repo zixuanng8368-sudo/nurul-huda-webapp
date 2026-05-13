@@ -30,11 +30,11 @@ function App() {
       
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={session ? <AdminPage /> : <Navigate to="/login" />} />
-        <Route path="/admin/events" element={session ? <EventPage /> : <Navigate to ="/login" />} />
-        <Route path="/admin/finance" element={session ? <FinancePage /> : <Navigate to ="/login" />} />
-        <Route path="/login" element={!session ? <LoginPage /> : <Navigate to="/" />} />
-        <Route path="/signup" element={!session ? <SignUpPage /> : <Navigate to="/" />} />
+        <Route path="/admin" element={session.user ? <AdminPage /> : <Navigate to="/login" />} />
+        <Route path="/admin/events" element={session.user ? <EventPage /> : <Navigate to ="/login" />} />
+        <Route path="/admin/finance" element={session.user ? <FinancePage /> : <Navigate to ="/login" />} />
+        <Route path="/login" element={!session.user ? <LoginPage /> : <Navigate to="/" />} />
+        <Route path="/signup" element={!session.user ? <SignUpPage /> : <Navigate to="/" />} />
         <Route path="*" element={<div className="p-4">Page Not Found</div>} />
       </Routes>
     </Router>
