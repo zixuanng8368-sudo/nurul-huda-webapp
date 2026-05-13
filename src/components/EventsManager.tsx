@@ -428,7 +428,7 @@ const EventsManager = () => {
                   value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </Field>
 
-              <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Tarikh" required>
                   <input type="date" className={inputCls}
                     value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
