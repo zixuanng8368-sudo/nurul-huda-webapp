@@ -7,12 +7,16 @@ import { ac, admin, financeadmin, superadmin, user } from "./permissions";
 console.log("[AUTH] Initializing with DATABASE_URL:", process.env.DATABASE_URL ? "✓ Set" : "✗ Not set");
 console.log("[AUTH] BETTER_AUTH_SECRET:", process.env.BETTER_AUTH_SECRET ? "✓ Set" : "✗ Not set");
 console.log("[AUTH] BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL || "using default");
+console.log("[AUTH] NODE_ENV:", process.env.NODE_ENV);
 
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
-    // SSL is required for Supabase/Neon in production
-    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+    // SSL is required for Supabase in production
+    ssl: process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test" ? { rejectUnauthorized: false } : false,
+    // Add connection timeout for serverless
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 30000,
   }),
   
   // CRITICAL: Must be the full URL to the API folder
