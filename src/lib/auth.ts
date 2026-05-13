@@ -6,12 +6,14 @@ import { ac, admin, financeadmin, superadmin, user } from "./permissions";
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
+    // Add SSL for Supabase production connections
+    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
   }),
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
+  baseURL: process.env.BETTER_AUTH_URL, 
   secret: process.env.BETTER_AUTH_SECRET,
   trustedOrigins: [
     "http://localhost:5173",
-    "http://localhost:5174",
+    "https://nurul-huda-webapp-3b5qis8xl-cdr-jies-projects.vercel.app", // Add your Vercel URL
   ],
   emailAndPassword: {
     enabled: true,
