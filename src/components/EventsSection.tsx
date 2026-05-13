@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import EventCard from '../components/EventCard';
+import { supabase } from '../supabaseClient';
 
 // ─── Type matching the DB schema ──────────────────────────────────────────────
 
@@ -10,6 +11,7 @@ interface Event {
   description: string;
   organizer: string;
   image_url: string | null;
+  surat?: string | null; // Add this with a '?' so it's optional
 }
 
 // ─── Helper: format ISO date → "11 Mei 2026" ─────────────────────────────────
@@ -52,29 +54,22 @@ const EventsSection: React.FC = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      try {
-        // TODO: Replace with your actual events API endpoint
-        // For now, showing a placeholder message
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/events`);
-        
-        if (!response.ok) {
-          setError('Acara sedang dimuat. Sila cuba lagi kemudian.');
-          setLoading(false);
-          return;
-        }
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('date', { ascending: true });
 
-        const data = await response.json();
-        setEvents(data ?? []);
-      } catch (err) {
-        console.error('Error fetching events:', err);
-        setError('Gagal memuatkan acara. Sila cuba lagi.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (error) {
+      setError('Gagal memuatkan acara. Sila cuba lagi.');
+    } else {
+      setEvents(data ?? []);
+    }
+
+    setLoading(false);
+  };
 
     fetchEvents();
   }, []);
