@@ -89,11 +89,11 @@ const UploadZone: React.FC<UploadZoneProps> = ({
   const previewUrl = file ? URL.createObjectURL(file) : existingUrl;
 
   return (
-    <div
-      onClick={() => inputRef.current?.click()}
-      className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
-    >
-      {previewImage && previewUrl ? (
+        <div
+          onClick={() => inputRef.current?.click()}
+          className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition touch-action-manipulation min-h-[44px]"
+        >
+        {previewImage && previewUrl ? (
         <div className="space-y-2">
           <img src={previewUrl} alt="Preview" className="h-32 w-full object-cover rounded-lg mx-auto" />
           <p className="text-xs text-gray-400">Klik untuk ganti gambar</p>
