@@ -58,6 +58,13 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+            {/* Events Section */}
+      <EventsSection />
+
+      {/* Quick Info Section */}
+      <MasjidLocation />
+
+
       {/* Services Section */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -90,12 +97,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Events Section */}
-      <EventsSection />
-
-      {/* Quick Info Section */}
-      <MasjidLocation />
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 px-4">
