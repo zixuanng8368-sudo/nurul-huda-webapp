@@ -12,7 +12,7 @@ interface EventProps {
 const handleShare = ({ title, date, organizer, description }: EventProps) => {
   const masjidName = "Masjid Nurul Huda Kg. Gentisan";
   const rawMessage =
-    `📢 *Acara Mendatang: ${title}*\n\n` +
+    `📣 *Acara Mendatang: ${title}*\n\n` +
     `🗓️ *Tarikh:* ${date}\n` +
     `👤 *Anjuran:* ${organizer}\n\n` +
     `${description}\n\n` +

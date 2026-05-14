@@ -1,6 +1,6 @@
 import EventsManager from "../../components/EventsManager";
 
-const EventPage: React.FC = () => {
+const AdminEventPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <EventsManager />
@@ -8,4 +8,4 @@ const EventPage: React.FC = () => {
     );
 }
 
-export default EventPage;
+export default AdminEventPage;
