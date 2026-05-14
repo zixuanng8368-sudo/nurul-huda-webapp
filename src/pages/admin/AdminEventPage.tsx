@@ -1,4 +1,4 @@
-import EventsManager from "../components/EventsManager";
+import EventsManager from "../../components/EventsManager";
 
 const EventPage: React.FC = () => {
     return (
