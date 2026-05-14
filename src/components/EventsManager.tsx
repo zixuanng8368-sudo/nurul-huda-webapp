@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
+import { compressImage } from '../utils/imageUpload';
 import {
   PlusIcon,
   PencilSquareIcon,
@@ -256,9 +257,10 @@ const EventsManager = () => {
     let letterUrl = form.host_letter_url;
 
     if (imageFile) {
-      imageUrl = await uploadFile(imageFile, 'event-images', 'images');
+      const compressed = await compressImage(imageFile);
+      imageUrl = await uploadFile(compressed, 'event-images', 'images');
       if (!imageUrl) { setFormError('Gagal memuat naik gambar. Sila cuba lagi.'); setSaving(false); return; }
-    }
+}
     if (letterFile) {
       letterUrl = await uploadFile(letterFile, 'event-letters', 'letters');
       if (!letterUrl) { setFormError('Gagal memuat naik surat. Sila cuba lagi.'); setSaving(false); return; }
@@ -280,8 +282,33 @@ const EventsManager = () => {
   // ── Delete ──────────────────────────────────────────────────────────────────
 
   const handleDelete = async (id: string) => {
+    const event = events.find(e => e.id === id);
+
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) { console.error('Delete error:', error); return; }
+
+    // Delete image from storage if it exists
+    if (event?.image_url) {
+      const path = event.image_url.split('/event-images/')[1];
+      if (path) {
+        const { error: storageError } = await supabase.storage
+          .from('event-images')
+          .remove([path]);
+        if (storageError) console.error('Image delete error:', storageError);
+      }
+    }
+
+    // Delete surat from storage if it exists
+    if (event?.host_letter_url) {
+      const path = event.host_letter_url.split('/event-letters/')[1];
+      if (path) {
+        const { error: storageError } = await supabase.storage
+          .from('event-letters')
+          .remove([path]);
+        if (storageError) console.error('Surat delete error:', storageError);
+      }
+    }
+
     setEvents(prev => prev.filter(e => e.id !== id));
     setDeleteModal({ show: false, id: null });
   };
