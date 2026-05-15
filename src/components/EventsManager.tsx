@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
+import { compressImage } from '../utils/imageUpload';
 import {
   PlusIcon,
   PencilSquareIcon,
@@ -12,6 +13,9 @@ import {
   CheckCircleIcon,
   PhotoIcon,
   MagnifyingGlassIcon,
+  ChevronUpDownIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 import * as XLSX from 'xlsx';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
@@ -131,6 +135,7 @@ const EventsManager = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<{ column: string; ascending: boolean }>({ column: 'date', ascending: false });
 
   const [modal, setModal] = useState<{ open: boolean; editing: Event | null }>({ open: false, editing: null });
   const [form, setForm] = useState<EventFormData>(EMPTY_FORM);
@@ -153,7 +158,48 @@ const EventsManager = () => {
       ev.organizer.toLowerCase().includes(q) ||
       formatDate(ev.date).toLowerCase().includes(q)
     );
+  }).sort((a, b) => {
+    let aVal: string | number = '';
+    let bVal: string | number = '';
+
+    switch (sortBy.column) {
+      case 'title':
+        aVal = a.title.toLowerCase();
+        bVal = b.title.toLowerCase();
+        break;
+      case 'date':
+        aVal = a.date;
+        bVal = b.date;
+        break;
+      case 'organizer':
+        aVal = a.organizer.toLowerCase();
+        bVal = b.organizer.toLowerCase();
+        break;
+      case 'status':
+        aVal = a.is_active ? 1 : 0;
+        bVal = b.is_active ? 1 : 0;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aVal < bVal) return sortBy.ascending ? -1 : 1;
+    if (aVal > bVal) return sortBy.ascending ? 1 : -1;
+    return 0;
   });
+
+  const handleSort = (column: string) => {
+    if (sortBy.column === column) {
+      setSortBy({ column, ascending: !sortBy.ascending });
+    } else {
+      setSortBy({ column, ascending: true });
+    }
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy.column !== column) return <ChevronUpDownIcon className="w-4 h-4" />;
+    return sortBy.ascending ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
+  };
 
   // ── Fetch ───────────────────────────────────────────────────────────────────
 
@@ -212,9 +258,10 @@ const EventsManager = () => {
     let letterUrl = form.host_letter_url;
 
     if (imageFile) {
-      imageUrl = await uploadFile(imageFile, 'event-images', 'images');
+      const compressed = await compressImage(imageFile);
+      imageUrl = await uploadFile(compressed, 'event-images', 'images');
       if (!imageUrl) { setFormError('Gagal memuat naik gambar. Sila cuba lagi.'); setSaving(false); return; }
-    }
+}
     if (letterFile) {
       letterUrl = await uploadFile(letterFile, 'event-letters', 'letters');
       if (!letterUrl) { setFormError('Gagal memuat naik surat. Sila cuba lagi.'); setSaving(false); return; }
@@ -236,8 +283,33 @@ const EventsManager = () => {
   // ── Delete ──────────────────────────────────────────────────────────────────
 
   const handleDelete = async (id: string) => {
+    const event = events.find(e => e.id === id);
+
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) { console.error('Delete error:', error); return; }
+
+    // Delete image from storage if it exists
+    if (event?.image_url) {
+      const path = event.image_url.split('/event-images/')[1];
+      if (path) {
+        const { error: storageError } = await supabase.storage
+          .from('event-images')
+          .remove([path]);
+        if (storageError) console.error('Image delete error:', storageError);
+      }
+    }
+
+    // Delete surat from storage if it exists
+    if (event?.host_letter_url) {
+      const path = event.host_letter_url.split('/event-letters/')[1];
+      if (path) {
+        const { error: storageError } = await supabase.storage
+          .from('event-letters')
+          .remove([path]);
+        if (storageError) console.error('Surat delete error:', storageError);
+      }
+    }
+
     setEvents(prev => prev.filter(e => e.id !== id));
     setDeleteModal({ show: false, id: null });
   };
@@ -352,11 +424,19 @@ const EventsManager = () => {
           <table className="w-full text-left">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Acara</th>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Tarikh</th>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Penganjur</th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('title')}>
+                  <div className="flex items-center gap-2">Acara {getSortIcon('title')}</div>
+                </th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('date')}>
+                  <div className="flex items-center gap-2">Tarikh {getSortIcon('date')}</div>
+                </th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('organizer')}>
+                  <div className="flex items-center gap-2">Penganjur {getSortIcon('organizer')}</div>
+                </th>
                 <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Surat</th>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Status</th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('status')}>
+                  <div className="flex items-center gap-2">Status {getSortIcon('status')}</div>
+                </th>
                 <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Tindakan</th>
               </tr>
             </thead>
