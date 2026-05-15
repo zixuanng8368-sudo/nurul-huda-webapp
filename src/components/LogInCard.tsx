@@ -114,7 +114,7 @@ const LoginCard = () => {
         </button>
 
         {/* Divider */}
-        <div className="relative py-4">
+        {/* <div className="relative py-4">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
           <div className="relative flex justify-center text-sm">
             <span className="bg-white px-4 text-gray-500">atau teruskan dengan</span>
@@ -135,9 +135,9 @@ const LoginCard = () => {
 
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
-            Don't have an account?
+            Tiada akaun?
             <Link to="/signup" className="ml-2 text-blue-600 hover:underline font-medium">
-              Sign Up
+              Daftar Sekarang
             </Link>
           </p>
         </div>
