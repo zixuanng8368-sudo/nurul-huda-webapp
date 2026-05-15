@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useSession, authClient } from '../lib/auth-client';
 import { useState } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -19,10 +19,11 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { name: 'Home',              href: '/'       },
-    { name: 'Carta Organisasi',  href: '/carta'  },
-    { name: 'Sejarah Masjid',    href: '/sejarah'},
-    { name: 'Pengurusan',    href: '/admin'},
+    { name: 'Home',             href: '/' },
+    { name: 'Carta Organisasi', href: '/carta' },
+    { name: 'Sejarah Masjid',   href: '/sejarah' },
+    // Only add this if the user is logged in
+    ...(session.user ? [{ name: 'Pengurusan', href: '/admin' }] : []),
   ];
 
   const handleNavClick = () => {
@@ -30,25 +31,27 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0 font-bold text-xl text-blue-600">
-            Masjid Kita
+            Masjid Nurul Huda
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <ul className="flex gap-8">
+          <div className="hidden md:flex items-center ml-auto gap-12">
+            <ul className="flex gap-10">
               {navItems.map((item, index) => (
                 <li key={index}>
-                  <Link 
+                  <NavLink 
                     to={item.href}
-                    className="text-gray-700 hover:text-blue-600 font-medium transition"
+                    className={({ isActive }) => 
+                      `font-medium transition ${isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-600'}`
+                    }
                   >
                     {item.name}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
@@ -72,7 +75,7 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-4">
-            {session.user ? (
+            {/* {session.user ? (
               <button
                 onClick={handleLogout}
                 className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded font-medium"
@@ -86,10 +89,10 @@ const Navbar = () => {
               >
                 Masuk
               </Link>
-            )}
+            )} */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-blue-600"
+              className="md:hidden text-gray-700 hover:text-blue-600"
             >
               {isMenuOpen ? (
                 <XMarkIcon className="w-6 h-6" />
@@ -106,13 +109,15 @@ const Navbar = () => {
             <ul className="flex flex-col gap-2">
               {navItems.map((item, index) => (
                 <li key={index}>
-                  <Link 
+                  <NavLink 
                     to={item.href}
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded font-medium transition"
                     onClick={handleNavClick}
+                    className={({ isActive }) => 
+                      `block px-4 py-2 rounded font-medium transition ${isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-blue-50'}`
+                    }
                   >
                     {item.name}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>

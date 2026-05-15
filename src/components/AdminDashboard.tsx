@@ -67,19 +67,6 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 pb-20">
-      <header className="mb-8 flex justify-between items-center px-2">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Panel Admin</h1>
-          <p className="text-sm text-gray-500">Nurul Huda Web App</p>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 p-2 text-gray-400 hover:text-red-500 transition"
-        >
-          <ArrowRightOnRectangleIcon className="w-6 h-6" />
-          <span className="text-sm font-bold">Log Keluar</span>
-        </button>
-      </header>
 
       {/*
         Mobile:  2 columns — 5 cards = 2 / 2 / 1 (last card centered via the wrapper below)

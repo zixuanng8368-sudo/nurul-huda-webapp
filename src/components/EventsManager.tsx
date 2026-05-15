@@ -18,6 +18,7 @@ import {
   ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 import * as XLSX from 'xlsx';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -333,14 +334,25 @@ const EventsManager = () => {
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-4 max-w-6xl mx-auto pb-20">
+    <div className="p-4 max-w-6xl mx-auto pb-20 text-left">
+      {/* Navigation Layer - This forces the button to the far left */}
+      <div className="w-full flex justify-start mb-2">
+        <button 
+          onClick={() => window.history.back()} 
+          className="flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors group"
+        >
+          <ChevronLeftIcon className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+          Kembali ke Menu Pengurusan
+        </button>
+      </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Pengurusan Acara</h1>
+      {/* Header Content Layer */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className="text-left">
+          <h1 className="text-2xl font-bold text-gray-900">Pengurusan Acara</h1>
           <p className="text-gray-500 text-sm">Uruskan aktiviti masjid</p>
         </div>
+
         <div className="flex gap-2 w-full sm:w-auto">
           <button onClick={exportToExcel}
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 font-semibold text-sm">
@@ -355,18 +367,23 @@ const EventsManager = () => {
 
       {/* Search bar */}
       <div className="relative mb-4">
+        {/* Left Icon */}
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        
         <input
           type="text"
           placeholder="Cari mengikut tajuk, penganjur, atau tarikh..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          style={{ paddingLeft: '3rem', paddingRight: '3rem' }} // Forcing 48px of space
+          className="w-full py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         />
+
+        {/* Right Button (Clear) */}
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
           >
             <XMarkIcon className="w-4 h-4" />
           </button>
@@ -441,9 +458,22 @@ const EventsManager = () => {
                         <div className="md:hidden text-xs text-gray-500 mt-0.5 space-y-0.5">
                           <div>{formatDate(event.date)} · {event.organizer}</div>
                           <div className="flex items-center gap-2">
-                            <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${event.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                            <button
+                              onClick={() => {
+                                setEvents(prevEvents => 
+                                  prevEvents.map(e => 
+                                    e.id === event.id ? { ...e, is_active: !e.is_active } : e
+                                  )
+                                );
+                              }}
+                              className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all duration-200 ${
+                                event.is_active 
+                                  ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
                               {event.is_active ? 'Aktif' : 'Tidak Aktif'}
-                            </span>
+                            </button>
                             {event.host_letter_url && (
                               <a href={event.host_letter_url} target="_blank" rel="noreferrer"
                                 className="inline-flex items-center gap-1 text-blue-600 text-[10px] font-semibold">
@@ -465,10 +495,23 @@ const EventsManager = () => {
                       </a>
                     ) : <span className="text-gray-400 text-sm">—</span>}
                   </td>
-                  <td className="p-4 hidden md:table-cell">
-                    <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${event.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => {
+                        setEvents(prevEvents => 
+                          prevEvents.map(e => 
+                            e.id === event.id ? { ...e, is_active: !e.is_active } : e
+                          )
+                        );
+                      }}
+                      className={`px-3 py-1 rounded-full text-xs font-medium border border-solid transition-all duration-200 ${
+                        event.is_active 
+                          ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' 
+                          : 'bg-gray-50 text-gray-600 border-gray-400 hover:bg-gray-200 shadow-sm'
+                      }`}
+                    >
                       {event.is_active ? 'Aktif' : 'Tidak Aktif'}
-                    </span>
+                    </button>
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-1">

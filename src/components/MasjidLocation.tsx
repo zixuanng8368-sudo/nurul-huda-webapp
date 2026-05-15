@@ -24,7 +24,7 @@ interface LocationConfig {
 // ─── Config — update these values ─────────────────────────────────────────────
 
 const locationConfig: LocationConfig = {
-  name: 'Masjid Kita',
+  name: 'Masjid Nurul Huda',
   address: 'Jalan Teluk Sepanggar, 88846',
   city: 'Kota Kinabalu, Sabah',
   phone: '+60 3 1234 5678',
@@ -112,7 +112,7 @@ const MasjidLocation: React.FC = () => {
                 </div>
               )}
               <iframe
-                title="Lokasi Masjid Kita"
+                title="Lokasi Masjid Nurul Huda"
                 src={cfg.mapEmbedUrl}
                 className="w-full h-full absolute inset-0"
                 style={{ border: 0, minHeight: '320px' }}
