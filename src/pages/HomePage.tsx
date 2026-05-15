@@ -58,7 +58,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-            {/* Events Section */}
+      {/* Events Section */}
       <EventsSection />
 
       {/* Quick Info Section */}

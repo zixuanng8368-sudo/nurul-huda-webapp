@@ -5,7 +5,7 @@ import {
   BanknotesIcon,
   MegaphoneIcon,
   PhotoIcon,
-  ArrowRightOnRectangleIcon,
+  ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import { supabase } from '../supabaseClient';
 
@@ -61,8 +61,13 @@ const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate('/');
+    } catch (error: any) {
+      console.error('Error logging out:', error.message);
+    }
   };
 
   return (
@@ -76,7 +81,7 @@ const AdminDashboard: React.FC = () => {
           onClick={handleLogout}
           className="flex items-center gap-2 p-2 text-gray-400 hover:text-red-500 transition"
         >
-          <ArrowRightOnRectangleIcon className="w-6 h-6" />
+          <ArrowRightStartOnRectangleIcon className="w-6 h-6" />
           <span className="text-sm font-bold">Log Keluar</span>
         </button>
       </header>

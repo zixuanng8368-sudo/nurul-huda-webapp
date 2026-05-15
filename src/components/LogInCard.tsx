@@ -7,9 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { passwordSchema } from "../lib/validation";
 
-import { 
-  GlobeAltIcon, 
-} from "@heroicons/react/24/outline";
+// import { 
+//   GlobeAltIcon, 
+// } from "@heroicons/react/24/outline";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"), // Fixed: z.string().email()
@@ -53,15 +53,15 @@ const LoginCard = () => {
   };
 
   // Social Login Handler (Example for when you're ready)
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/admin`,
-      },
-    });
-    if (error) setServerError(error.message);
-  };
+  // const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+  //   const { error } = await supabase.auth.signInWithOAuth({
+  //     provider,
+  //     options: {
+  //       redirectTo: `${window.location.origin}/admin`,
+  //     },
+  //   });
+  //   if (error) setServerError(error.message);
+  // };
 
   return (
     <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
@@ -121,7 +121,8 @@ const LoginCard = () => {
           </div>
         </div>
 
-        <div className="space-y-3">
+        /* Social Login Buttons */
+        {/* <div className="space-y-3">
           <button
             type="button"
             className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-50 transition"
@@ -130,7 +131,7 @@ const LoginCard = () => {
             <GlobeAltIcon className="w-5 h-5 text-gray-600" />
             <span className="font-medium">Google</span>
           </button>
-        </div>
+        </div> */}
 
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
