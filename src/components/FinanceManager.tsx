@@ -7,6 +7,7 @@ import {
   MagnifyingGlassIcon, XMarkIcon, ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import * as XLSX from 'xlsx';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -308,15 +309,26 @@ const FinanceManager = () => {
 
   return (
     <div className="p-4 max-w-6xl mx-auto pb-20">
+      {/* Navigation Layer - Anchored to the far left */}
+      <div className="w-full flex justify-start mb-2">
+        <button 
+          onClick={() => window.history.back()} 
+          className="flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors group"
+        >
+          <ChevronLeftIcon className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+          Kembali ke Menu Pengurusan
+        </button>
+      </div>
 
-      {/* Header */}
+      {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div>
+        <div className="text-left">
           <h1 className="text-2xl font-bold text-gray-800">Kewangan & Tabung</h1>
           <p className="text-gray-500 text-sm">Rekod kewangan dan kutipan dana masjid</p>
         </div>
+
         <button onClick={exportToExcel}
-          className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 font-semibold text-sm w-full sm:w-auto justify-center">
+          className="flex items-center justify-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 font-semibold text-sm w-full sm:w-auto">
           <ArrowDownTrayIcon className="w-4 h-4" /> Export Excel
         </button>
       </div>
