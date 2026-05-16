@@ -1,7 +1,7 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useSession, authClient } from '../lib/auth-client';
-import { useState } from 'react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useSession, authClient } from "../lib/auth-client";
+import { useState } from "react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -12,18 +12,18 @@ const Navbar = () => {
     try {
       await authClient.signOut();
       setIsMenuOpen(false);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error("Sign out error:", error);
     }
   };
 
   const navItems = [
-    { name: 'Home',             href: '/' },
-    { name: 'Carta Organisasi', href: '/carta' },
-    { name: 'Sejarah Masjid',   href: '/sejarah' },
+    { name: "Home", href: "/" },
+    { name: "Carta Organisasi", href: "/carta" },
+    { name: "Sejarah Masjid", href: "/sejarah" },
     // Only add this if the user is logged in
-    ...(session.user ? [{ name: 'Pengurusan', href: '/admin' }] : []),
+    ...(session.user ? [{ name: "Pengurusan", href: "/admin" }] : []),
   ];
 
   const handleNavClick = () => {
@@ -35,7 +35,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0 font-bold text-xl text-blue-600">
+          <Link
+            to="/"
+            className="flex-shrink-0 font-bold text-xl text-blue-600"
+          >
             Masjid Nurul Huda
           </Link>
 
@@ -44,10 +47,10 @@ const Navbar = () => {
             <ul className="flex gap-10">
               {navItems.map((item, index) => (
                 <li key={index}>
-                  <NavLink 
+                  <NavLink
                     to={item.href}
-                    className={({ isActive }) => 
-                      `font-medium transition ${isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-600'}`
+                    className={({ isActive }) =>
+                      `font-medium transition ${isActive ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-700 hover:text-blue-600"}`
                     }
                   >
                     {item.name}
@@ -75,21 +78,6 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-4">
-            {/* {session.user ? (
-              <button
-                onClick={handleLogout}
-                className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded font-medium"
-              >
-                Keluar
-              </button>
-            ) : (
-              <Link
-                to="/login"
-                className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-medium"
-              >
-                Masuk
-              </Link>
-            )} */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden text-gray-700 hover:text-blue-600"
@@ -109,17 +97,40 @@ const Navbar = () => {
             <ul className="flex flex-col gap-2">
               {navItems.map((item, index) => (
                 <li key={index}>
-                  <NavLink 
+                  <NavLink
                     to={item.href}
                     onClick={handleNavClick}
-                    className={({ isActive }) => 
-                      `block px-4 py-2 rounded font-medium transition ${isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-blue-50'}`
+                    className={({ isActive }) =>
+                      `block px-4 py-2 rounded font-medium transition ${
+                        isActive
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-700 hover:bg-blue-50"
+                      }`
                     }
                   >
                     {item.name}
                   </NavLink>
                 </li>
               ))}
+
+              <li className="px-4 pt-2">
+                {session.user ? (
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded font-medium transition"
+                  >
+                    Log Keluar
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={handleNavClick}
+                    className="block w-full text-center text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded font-medium transition"
+                  >
+                    Log Masuk
+                  </Link>
+                )}
+              </li>
             </ul>
           </div>
         )}
