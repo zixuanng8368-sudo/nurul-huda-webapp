@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { authClient } from "../lib/auth-client";
-import { useNavigate } from "react-router-dom";
 
 const SettingsManagement = () => {
-  const navigate = useNavigate();
+
   const { data: session } = authClient.useSession();
   
   // Password State
@@ -11,9 +10,6 @@ const SettingsManagement = () => {
   const [newPassword, setNewPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   
-  // Delete Account State
-  const [isDeleting, setIsDeleting] = useState(false);
-
   // --- ACTIONS ---
 
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -37,17 +33,6 @@ const SettingsManagement = () => {
     }
   };
 
-  const handleSetupPasskey = async () => {
-    try {
-      await authClient.passkey.addPasskey({
-        onSuccess: () => alert("Passkey successfully registered!"),
-        onError: (ctx) => alert(ctx.error.message || "Failed to register passkey.")
-      });
-    } catch (error) {
-      alert("Passkey plugin might not be configured yet.");
-    }
-  };
-
   const handleLinkSocial = async (provider: 'google' | 'facebook') => {
     try {
       await authClient.signIn.social({
@@ -59,26 +44,6 @@ const SettingsManagement = () => {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm(
-      "Are you absolutely sure? This action cannot be undone and will permanently delete your account data."
-    );
-    
-    if (!confirmDelete) return;
-
-    setIsDeleting(true);
-    try {
-      await authClient.deleteUser({
-        onSuccess: () => {
-          alert("Account deleted.");
-          navigate("/");
-        },
-        onError: (ctx) => alert(ctx.error.message || "Failed to delete account.")
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   if (!session) {
     return <div className="p-8 text-center text-gray-500">Loading settings...</div>;
@@ -154,7 +119,7 @@ const SettingsManagement = () => {
               Use your device's fingerprint, face scan, or screen lock to sign in securely without a password.
             </p>
             <button
-              onClick={handleSetupPasskey}
+              
               type="button"
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-2"
             >
@@ -212,11 +177,9 @@ const SettingsManagement = () => {
             </p>
           </div>
           <button
-            onClick={handleDeleteAccount}
-            disabled={isDeleting}
             className="px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-300 rounded-md hover:bg-red-50 disabled:opacity-50 transition-colors whitespace-nowrap"
           >
-            {isDeleting ? "Deleting..." : "Delete Account"}
+            {"Delete Account"}
           </button>
         </div>
       </div>
