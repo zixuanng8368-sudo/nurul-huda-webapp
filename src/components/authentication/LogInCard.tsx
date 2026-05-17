@@ -45,7 +45,7 @@ const LoginCard = () => {
 
     const validatedData = parsedData.data;
 
-    const { error } = await authClient.signIn.email({
+    const { data: user, error } = await authClient.signIn.email({
       email: validatedData.email,
       password: validatedData.password,
     });
@@ -55,12 +55,12 @@ const LoginCard = () => {
       setLoading(false);
       return;
     }
+    {user.user.role == "user" ? window.location.href ="/" : window.location.href="/admin"}
 
-    window.location.href = "/admin";
   };
 
   return (
-    <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+    <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 mx-auto" >
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Log Masuk</h2>
 
@@ -77,7 +77,7 @@ const LoginCard = () => {
           <input
             type="email"
             placeholder="nama@contoh.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-3 rounded-xl border text-white border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
             data-invalid={!!form.formState.errors.email}
             aria-invalid={!!form.formState.errors.email}
             {...form.register("email")}
@@ -99,7 +99,7 @@ const LoginCard = () => {
           <input
             type="password"
             placeholder="••••••••"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-3 rounded-xl border text-white border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
             data-invalid={!!form.formState.errors.password}
             aria-invalid={!!form.formState.errors.password}
             {...form.register("password")}

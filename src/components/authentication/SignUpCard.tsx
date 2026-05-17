@@ -34,7 +34,6 @@ const SignUpCard = () => {
 
   const handleSignUp = async (data: SignUpData) => {
     setLoading(true);
-
     setServerError(null);
 
     // Extra validation safety
@@ -88,7 +87,7 @@ const SignUpCard = () => {
   };
 
   return (
-    <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+    <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 mx-auto">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">
           Sign Up
@@ -112,7 +111,7 @@ const SignUpCard = () => {
           <input
             type="text"
             placeholder="John Doe"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-3 rounded-xl border text-white border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
 
             data-invalid={
               !!form.formState.errors.username
@@ -144,7 +143,7 @@ const SignUpCard = () => {
           <input
             type="email"
             placeholder="nama@contoh.com"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-3 rounded-xl border text-white border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
 
             data-invalid={
               !!form.formState.errors.email
@@ -173,7 +172,7 @@ const SignUpCard = () => {
           <input
             type="password"
             placeholder="••••••••"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-3 rounded-xl border text-white border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
 
             data-invalid={
               !!form.formState.errors.password
