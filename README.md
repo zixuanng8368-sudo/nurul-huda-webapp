@@ -12,3 +12,12 @@ A React + TypeScript + Vite web application integrated with Supabase.
 4. Add sejarah masjid and carta organisasi (Will be sent by Pihak masjid)
 5. Calendar annual acitivity (categories activity to months) 
 6. Place to put official document (folder)
+
+# Scaling
+On the issue of scaling, the most probable run-in we would have is database storage running out
+We are not really worried about tables running out of space though, as there just isn't enough users/events/transactions/assets
+
+The plan is to delete storage items from the database once 3 years have passed (example: event poster uploaded in 2026 will be removed on 2030)
+We'll move those to the Masjid Nurul Huda google drive though, since it has greater amount of storage
+
+# Pro tip: Increasing google drive storage is much cheaper than going pro on Supabase
