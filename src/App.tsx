@@ -7,7 +7,6 @@ import SignUpPage from './pages/authentication/SignUpPage';
 import EventsPage from './pages/EventsPage';
 import FinancePage from './pages/FinancePage';
 import { useSession, authClient } from './lib/auth-client';
-import EventPage from './pages/EventPage';
 import UserPage from './pages/UserPage';
 import SettingsPage from './pages/SettingsPage';
 
@@ -77,7 +76,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/admin" element={session ? <AdminPage /> : <Navigate to="/login" />} />
-        <Route path="/admin/events" element={session ? <EventPage /> : <Navigate to ="/login" />} />
+        <Route path="/admin/events" element={session ? <EventsPage /> : <Navigate to ="/login" />} />
         <Route path="/admin/finance" element={session ? <FinancePage /> : <Navigate to ="/login" />} />
         <Route path="/admin/users" element={session ? <UserPage /> : <Navigate to ="/login" />} />
         <Route path="/settings" element={session ? <SettingsPage /> : <Navigate to ="/login" />} />

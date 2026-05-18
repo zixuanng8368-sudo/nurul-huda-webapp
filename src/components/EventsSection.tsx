@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import EventCard from '../components/EventCard';
-import { supabase } from '../supabaseClient';
 import { Link } from 'react-router-dom';
 
 // ─── Type matching the DB schema ──────────────────────────────────────────────
