@@ -1,12 +1,8 @@
-import { createAccessControl } from "better-auth/plugins/access";
-import {
-  defaultStatements,
-  userAc,
-  adminAc,
-} from "better-auth/plugins/admin/access";
+import { supabase } from "../supabaseClient";
+import type { User } from "@supabase/supabase-js";
 
 /**
- * make sure to use `as const` so typescript can infer the type correctly
+ * User roles in the system
  */
 export const statement = {
   ...defaultStatements,

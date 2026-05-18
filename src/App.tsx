@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
-import AdminPage from './pages/AdminPage';
+import AdminPage from './pages/admin/AdminPage';
 import LoginPage from './pages/authentication/LoginPage';
 import SignUpPage from './pages/authentication/SignUpPage';
+import EventsPage from './pages/EventsPage';
 import FinancePage from './pages/FinancePage';
 import { useSession, authClient } from './lib/auth-client';
 import EventPage from './pages/EventPage';

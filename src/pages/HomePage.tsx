@@ -19,9 +19,9 @@ const HomePage: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">Tentang Masjid Kita</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">Tentang Masjid Nurul Huda</h2>
               <p className="text-gray-700 text-lg mb-4">
-                Masjid Kita adalah pusat ibadah dan pembelajaran Islam yang berdedikasi untuk melayani komunitas Muslim lokal. Kami berkomitmen untuk menyediakan fasilitas berkualitas tinggi dan program pendidikan Islam yang berkomprehensif.
+                Masjid Nurul Huda adalah pusat ibadah dan pembelajaran Islam yang berdedikasi untuk melayani komunitas Muslim lokal. Kami berkomitmen untuk menyediakan fasilitas berkualitas tinggi dan program pendidikan Islam yang berkomprehensif.
               </p>
               <p className="text-gray-700 text-lg mb-6">
                 Dengan moto "Menyemai Taqwa, Memperkasa Ummah", kami berfokus pada pembangunan spiritual, intelektual, dan sosial masyarakat Muslim.
@@ -50,13 +50,20 @@ const HomePage: React.FC = () => {
             <div>
               <img 
                 src={masjid} 
-                alt="Masjid Kita" 
+                alt="Masjid Nurul Huda" 
                 className="rounded-lg shadow-lg"
               />
             </div>
           </div>
         </div>
       </section>
+
+      {/* Events Section */}
+      <EventsSection />
+
+      {/* Quick Info Section */}
+      <MasjidLocation />
+
 
       {/* Services Section */}
       <section className="py-12 px-4 bg-white">
@@ -91,18 +98,12 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Events Section */}
-      <EventsSection />
-
-      {/* Quick Info Section */}
-      <MasjidLocation />
-
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h4 className="text-xl font-bold mb-4">Masjid Kita</h4>
+              <h4 className="text-xl font-bold mb-4">Masjid Nurul Huda</h4>
               <p className="text-gray-400 text-sm">Menyemai Taqwa, Memperkasa Ummah</p>
             </div>
 
@@ -127,7 +128,7 @@ const HomePage: React.FC = () => {
             <div>
               <h4 className="font-bold mb-4">Ikuti Kami</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-white">Facebook</a></li>
+                <li><a href="https://www.facebook.com/profile.php?id=61587368138930" className="hover:text-white">Facebook</a></li>
                 <li><a href="#" className="hover:text-white">Instagram</a></li>
                 <li><a href="#" className="hover:text-white">WhatsApp</a></li>
               </ul>
@@ -135,7 +136,7 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
-            <p>&copy; 2026 Masjid Kita. Semua hak terpelihara. | Privasi | Syarat Penggunaan</p>
+            <p>&copy; 2026 Masjid Nurul Huda. Semua hak terpelihara. | Privasi | Syarat Penggunaan</p>
           </div>
         </div>
       </footer>

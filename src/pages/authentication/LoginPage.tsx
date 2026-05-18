@@ -1,7 +1,7 @@
-import LoginCard from "../../components/authentication/LogInCard";
+import LoginCard from "../../components/LogInCard";
 const LoginPage = () => {
     return (
-        <div>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <LoginCard />
         </div>
     )

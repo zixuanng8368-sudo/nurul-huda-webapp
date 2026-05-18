@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
+import { compressImage } from '../utils/imageUpload';
 import {
   PlusIcon,
   PencilSquareIcon,
@@ -12,8 +13,12 @@ import {
   CheckCircleIcon,
   PhotoIcon,
   MagnifyingGlassIcon,
+  ChevronUpDownIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 import * as XLSX from 'xlsx';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -65,7 +70,7 @@ const Field = ({
   </div>
 );
 
-const inputCls = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500';
+const inputCls = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white';
 
 // ─── Upload Zone ──────────────────────────────────────────────────────────────
 
@@ -89,11 +94,11 @@ const UploadZone: React.FC<UploadZoneProps> = ({
   const previewUrl = file ? URL.createObjectURL(file) : existingUrl;
 
   return (
-    <div
-      onClick={() => inputRef.current?.click()}
-      className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
-    >
-      {previewImage && previewUrl ? (
+        <div
+          onClick={() => inputRef.current?.click()}
+          className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition touch-action-manipulation min-h-[44px]"
+        >
+        {previewImage && previewUrl ? (
         <div className="space-y-2">
           <img src={previewUrl} alt="Preview" className="h-32 w-full object-cover rounded-lg mx-auto" />
           <p className="text-xs text-gray-400">Klik untuk ganti gambar</p>
@@ -130,6 +135,7 @@ const EventsManager = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<{ column: string; ascending: boolean }>({ column: 'date', ascending: false });
 
   const [modal, setModal] = useState<{ open: boolean; editing: Event | null }>({ open: false, editing: null });
   const [form, setForm] = useState<EventFormData>(EMPTY_FORM);
@@ -152,7 +158,48 @@ const EventsManager = () => {
       ev.organizer.toLowerCase().includes(q) ||
       formatDate(ev.date).toLowerCase().includes(q)
     );
+  }).sort((a, b) => {
+    let aVal: string | number = '';
+    let bVal: string | number = '';
+
+    switch (sortBy.column) {
+      case 'title':
+        aVal = a.title.toLowerCase();
+        bVal = b.title.toLowerCase();
+        break;
+      case 'date':
+        aVal = a.date;
+        bVal = b.date;
+        break;
+      case 'organizer':
+        aVal = a.organizer.toLowerCase();
+        bVal = b.organizer.toLowerCase();
+        break;
+      case 'status':
+        aVal = a.is_active ? 1 : 0;
+        bVal = b.is_active ? 1 : 0;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aVal < bVal) return sortBy.ascending ? -1 : 1;
+    if (aVal > bVal) return sortBy.ascending ? 1 : -1;
+    return 0;
   });
+
+  const handleSort = (column: string) => {
+    if (sortBy.column === column) {
+      setSortBy({ column, ascending: !sortBy.ascending });
+    } else {
+      setSortBy({ column, ascending: true });
+    }
+  };
+
+  const getSortIcon = (column: string) => {
+    if (sortBy.column !== column) return <ChevronUpDownIcon className="w-4 h-4" />;
+    return sortBy.ascending ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
+  };
 
   // ── Fetch ───────────────────────────────────────────────────────────────────
 
@@ -211,9 +258,10 @@ const EventsManager = () => {
     let letterUrl = form.host_letter_url;
 
     if (imageFile) {
-      imageUrl = await uploadFile(imageFile, 'event-images', 'images');
+      const compressed = await compressImage(imageFile);
+      imageUrl = await uploadFile(compressed, 'event-images', 'images');
       if (!imageUrl) { setFormError('Gagal memuat naik gambar. Sila cuba lagi.'); setSaving(false); return; }
-    }
+}
     if (letterFile) {
       letterUrl = await uploadFile(letterFile, 'event-letters', 'letters');
       if (!letterUrl) { setFormError('Gagal memuat naik surat. Sila cuba lagi.'); setSaving(false); return; }
@@ -235,8 +283,33 @@ const EventsManager = () => {
   // ── Delete ──────────────────────────────────────────────────────────────────
 
   const handleDelete = async (id: string) => {
+    const event = events.find(e => e.id === id);
+
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) { console.error('Delete error:', error); return; }
+
+    // Delete image from storage if it exists
+    if (event?.image_url) {
+      const path = event.image_url.split('/event-images/')[1];
+      if (path) {
+        const { error: storageError } = await supabase.storage
+          .from('event-images')
+          .remove([path]);
+        if (storageError) console.error('Image delete error:', storageError);
+      }
+    }
+
+    // Delete surat from storage if it exists
+    if (event?.host_letter_url) {
+      const path = event.host_letter_url.split('/event-letters/')[1];
+      if (path) {
+        const { error: storageError } = await supabase.storage
+          .from('event-letters')
+          .remove([path]);
+        if (storageError) console.error('Surat delete error:', storageError);
+      }
+    }
+
     setEvents(prev => prev.filter(e => e.id !== id));
     setDeleteModal({ show: false, id: null });
   };
@@ -261,14 +334,25 @@ const EventsManager = () => {
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-4 max-w-6xl mx-auto pb-20">
+    <div className="p-4 max-w-6xl mx-auto pb-20 text-left">
+      {/* Navigation Layer - This forces the button to the far left */}
+      <div className="w-full flex justify-start mb-2">
+        <button 
+          onClick={() => window.history.back()} 
+          className="flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors group"
+        >
+          <ChevronLeftIcon className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+          Kembali ke Menu Pengurusan
+        </button>
+      </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Pengurusan Acara</h1>
+      {/* Header Content Layer */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className="text-left">
+          <h1 className="text-2xl font-bold text-gray-900">Pengurusan Acara</h1>
           <p className="text-gray-500 text-sm">Uruskan aktiviti masjid</p>
         </div>
+
         <div className="flex gap-2 w-full sm:w-auto">
           <button onClick={exportToExcel}
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 font-semibold text-sm">
@@ -283,18 +367,23 @@ const EventsManager = () => {
 
       {/* Search bar */}
       <div className="relative mb-4">
+        {/* Left Icon */}
         <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        
         <input
           type="text"
           placeholder="Cari mengikut tajuk, penganjur, atau tarikh..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          style={{ paddingLeft: '3rem', paddingRight: '3rem' }} // Forcing 48px of space
+          className="w-full py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         />
+
+        {/* Right Button (Clear) */}
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
           >
             <XMarkIcon className="w-4 h-4" />
           </button>
@@ -335,11 +424,19 @@ const EventsManager = () => {
           <table className="w-full text-left">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Acara</th>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Tarikh</th>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Penganjur</th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('title')}>
+                  <div className="flex items-center gap-2">Acara {getSortIcon('title')}</div>
+                </th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('date')}>
+                  <div className="flex items-center gap-2">Tarikh {getSortIcon('date')}</div>
+                </th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('organizer')}>
+                  <div className="flex items-center gap-2">Penganjur {getSortIcon('organizer')}</div>
+                </th>
                 <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Surat</th>
-                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Status</th>
+                <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell cursor-pointer hover:bg-gray-100 transition" onClick={() => handleSort('status')}>
+                  <div className="flex items-center gap-2">Status {getSortIcon('status')}</div>
+                </th>
                 <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Tindakan</th>
               </tr>
             </thead>
@@ -361,9 +458,22 @@ const EventsManager = () => {
                         <div className="md:hidden text-xs text-gray-500 mt-0.5 space-y-0.5">
                           <div>{formatDate(event.date)} · {event.organizer}</div>
                           <div className="flex items-center gap-2">
-                            <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${event.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                            <button
+                              onClick={() => {
+                                setEvents(prevEvents => 
+                                  prevEvents.map(e => 
+                                    e.id === event.id ? { ...e, is_active: !e.is_active } : e
+                                  )
+                                );
+                              }}
+                              className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all duration-200 ${
+                                event.is_active 
+                                  ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
                               {event.is_active ? 'Aktif' : 'Tidak Aktif'}
-                            </span>
+                            </button>
                             {event.host_letter_url && (
                               <a href={event.host_letter_url} target="_blank" rel="noreferrer"
                                 className="inline-flex items-center gap-1 text-blue-600 text-[10px] font-semibold">
@@ -385,10 +495,23 @@ const EventsManager = () => {
                       </a>
                     ) : <span className="text-gray-400 text-sm">—</span>}
                   </td>
-                  <td className="p-4 hidden md:table-cell">
-                    <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${event.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => {
+                        setEvents(prevEvents => 
+                          prevEvents.map(e => 
+                            e.id === event.id ? { ...e, is_active: !e.is_active } : e
+                          )
+                        );
+                      }}
+                      className={`px-3 py-1 rounded-full text-xs font-medium border border-solid transition-all duration-200 ${
+                        event.is_active 
+                          ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' 
+                          : 'bg-gray-50 text-gray-600 border-gray-400 hover:bg-gray-200 shadow-sm'
+                      }`}
+                    >
                       {event.is_active ? 'Aktif' : 'Tidak Aktif'}
-                    </span>
+                    </button>
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-1">
@@ -412,7 +535,7 @@ const EventsManager = () => {
       {/* ── Add / Edit Modal ───────────────────────────────────────────────── */}
       {modal.open && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-xl max-h-[92dvh] flex flex-col">
+          <div className="bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl shadow-xl max-h-[92dvh] flex flex-col overflow-x-hidden">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 shrink-0">
               <h2 className="text-lg font-bold text-gray-800">
                 {modal.editing ? 'Kemaskini Acara' : 'Tambah Acara Baru'}
@@ -422,13 +545,13 @@ const EventsManager = () => {
               </button>
             </div>
 
-            <div className="overflow-y-auto p-5 space-y-4 flex-1">
+            <div className="overflow-y-auto overflow-x-hidden px-4 sm:px-5 py-5 space-y-4 flex-1">
               <Field label="Tajuk Acara" required>
                 <input className={inputCls} placeholder="cth. Kuliah Subuh"
                   value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </Field>
 
-              <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Tarikh" required>
                   <input type="date" className={inputCls}
                     value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />

@@ -3,7 +3,7 @@ import { adminClient } from "better-auth/client/plugins";
 import { ac, user, admin, financeadmin, superadmin } from "./permissions";
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3001", // Backend API server where auth endpoints are
+  baseURL: import.meta.env.VITE_APP_URL, // Must match the baseURL in auth.ts
   plugins: [
     adminClient({
       ac,
@@ -18,4 +18,4 @@ export const authClient = createAuthClient({
   ],
 });
 
-export const { signIn, signUp, signOut, useSession } = authClient;
+export const { signOut, useSession: useSessionHook } = authClient;

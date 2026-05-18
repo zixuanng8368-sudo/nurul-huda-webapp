@@ -24,9 +24,9 @@ interface LocationConfig {
 // ─── Config — update these values ─────────────────────────────────────────────
 
 const locationConfig: LocationConfig = {
-  name: 'Masjid Kita',
-  address: 'Jalan Rajah, 50400',
-  city: 'Kuala Lumpur, Malaysia',
+  name: 'Masjid Nurul Huda',
+  address: 'Jalan Teluk Sepanggar, 88846',
+  city: 'Kota Kinabalu, Sabah',
   phone: '+60 3 1234 5678',
   email: 'info@masjidkita.com',
   // Replace with your actual Google Maps embed URL
@@ -112,7 +112,7 @@ const MasjidLocation: React.FC = () => {
                 </div>
               )}
               <iframe
-                title="Lokasi Masjid Kita"
+                title="Lokasi Masjid Nurul Huda"
                 src={cfg.mapEmbedUrl}
                 className="w-full h-full absolute inset-0"
                 style={{ border: 0, minHeight: '320px' }}
@@ -124,88 +124,63 @@ const MasjidLocation: React.FC = () => {
             </div>
 
             {/* ── Info panel (2 cols) ── */}
-            <div className="lg:col-span-2 flex flex-col justify-between p-8 gap-8">
+            <div className="lg:col-span-2 flex flex-col justify-center items-center p-8 gap-8 text-center">
 
               {/* Name + status */}
-              <div>
+              <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-3 mb-1">
                   <h3 className="text-2xl font-bold text-gray-900">{cfg.name}</h3>
-                  <span
-                    className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                      isOpen
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-600'
-                    }`}
-                  >
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                    isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                  }`}>
                     {isOpen ? 'Buka' : 'Tutup'}
                   </span>
                 </div>
                 <p className="text-gray-400 text-sm">Pusat Ibadah & Pembelajaran Islam</p>
               </div>
 
-              {/* Address */}
-              <div className="space-y-5">
-                <div className="flex items-start gap-3 text-gray-700">
-                  <span className="text-blue-600 mt-0.5 shrink-0"><IconPin /></span>
-                  <div>
-                    <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-0.5">Alamat</p>
-                    <p className="text-gray-800">{cfg.address}</p>
-                    <p className="text-gray-800">{cfg.city}</p>
-                  </div>
+              {/* Details */}
+              <div className="space-y-5 w-full">
+                <div className="flex flex-col items-center gap-1 text-gray-700">
+                  <span className="text-blue-600"><IconPin /></span>
+                  <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Alamat</p>
+                  <p className="text-gray-800">{cfg.address}</p>
+                  <p className="text-gray-800">{cfg.city}</p>
                 </div>
 
-                {/* Phone */}
-                <div className="flex items-start gap-3 text-gray-700">
-                  <span className="text-blue-600 mt-0.5 shrink-0"><IconPhone /></span>
-                  <div>
-                    <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-0.5">Telefon</p>
-                    <a
-                      href={`tel:${cfg.phone.replace(/\s/g, '')}`}
-                      className="text-gray-800 hover:text-blue-600 transition-colors"
-                    >
-                      {cfg.phone}
-                    </a>
-                  </div>
+                <div className="flex flex-col items-center gap-1 text-gray-700">
+                  <span className="text-blue-600"><IconPhone /></span>
+                  <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Telefon</p>
+                  <a href={`tel:${cfg.phone.replace(/\s/g, '')}`} className="text-gray-800 hover:text-blue-600 transition-colors">
+                    {cfg.phone}
+                  </a>
                 </div>
 
-                {/* Email */}
-                <div className="flex items-start gap-3 text-gray-700">
-                  <span className="text-blue-600 mt-0.5 shrink-0"><IconMail /></span>
-                  <div>
-                    <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-0.5">E-mel</p>
-                    <a
-                      href={`mailto:${cfg.email}`}
-                      className="text-gray-800 hover:text-blue-600 transition-colors break-all"
-                    >
-                      {cfg.email}
-                    </a>
-                  </div>
+                <div className="flex flex-col items-center gap-1 text-gray-700">
+                  <span className="text-blue-600"><IconMail /></span>
+                  <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide">E-mel</p>
+                  <a href={`mailto:${cfg.email}`} className="text-gray-800 hover:text-blue-600 transition-colors break-all">
+                    {cfg.email}
+                  </a>
                 </div>
 
-                {/* Operating hours */}
-                <div className="flex items-start gap-3">
-                  <span className="text-blue-600 mt-0.5 shrink-0"><IconClock /></span>
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-2">Waktu Operasi</p>
-                    <div className="space-y-1.5">
-                      {cfg.operatingHours.map((row, i) => (
-                        <div key={i} className="flex justify-between text-sm">
-                          <span className="text-gray-600">{row.day}</span>
-                          <span className="text-gray-800 font-medium">{row.hours}</span>
-                        </div>
-                      ))}
-                    </div>
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-blue-600"><IconClock /></span>
+                  <p className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-1">Waktu Operasi</p>
+                  <div className="space-y-1.5 w-full">
+                    {cfg.operatingHours.map((row, i) => (
+                      <div key={i} className="flex justify-between text-sm">
+                        <span className="text-gray-600">{row.day}</span>
+                        <span className="text-gray-800 font-medium">{row.hours}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
               {/* CTA */}
-              <a
-                href={cfg.directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors w-full"
-              >
+              <a href={cfg.directionsUrl} target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors w-full">
                 <IconDirections />
                 Dapatkan Arah Tuju
               </a>
