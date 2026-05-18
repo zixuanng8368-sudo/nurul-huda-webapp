@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import EventCard from '../components/EventCard';
+import { Link } from 'react-router-dom';
 
 // ─── Type matching the DB schema ──────────────────────────────────────────────
 
@@ -10,6 +11,7 @@ interface Event {
   description: string;
   organizer: string;
   image_url: string | null;
+  surat?: string | null; // Add this with a '?' so it's optional
 }
 
 // ─── Helper: format ISO date → "11 Mei 2026" ─────────────────────────────────
@@ -52,8 +54,8 @@ const EventsSection: React.FC = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
       try {
         // Fetch from the backend API endpoint
@@ -136,9 +138,11 @@ const EventsSection: React.FC = () => {
         {/* CTA */}
         {!loading && (
           <div className="mt-8 text-center">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-              Lihat Semua Acara
-            </button>
+            <Link to="/events">
+              <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                Lihat Semua Acara
+              </button>
+            </Link>
           </div>
         )}
       </div>

@@ -1,115 +1,138 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSession, authClient } from '../lib/auth-client';
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useSession, authClient } from "../lib/auth-client";
+import { useState } from "react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const Navbar = () => {
   const { data: session } = useSession();
   const navigate = useNavigate();
-  
-  // State for managing the dropdown menu
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown when clicking outside of it
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    setIsDropdownOpen(false);
-    navigate('/');
+    try {
+      await authClient.signOut();
+      setIsMenuOpen(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
   };
 
   const navItems = [
-    { name: 'Home',              href: '/'       },
-    { name: 'Carta Organisasi',  href: '/carta'  },
-    { name: 'Sejarah Masjid',    href: '/sejarah'},
+    { name: "Home", href: "/" },
+    { name: "Carta Organisasi", href: "/carta" },
+    { name: "Sejarah Masjid", href: "/sejarah" },
+    // Only add this if the user is logged in
+    ...(session?.user ? [{ name: "Pengurusan", href: "/admin" }] : []),
   ];
 
-  // Check if the user has an admin-level role
-  const isAdmin = session?.user?.role && ["admin", "financeadmin", "superadmin"].includes(session.user.role);
+  const handleNavClick = () => {
+    setIsMenuOpen(false);
+  };
 
   return (
-    <nav className="nav-bar">
-      <div className="nav-container">
-        <a href="/" className="logo">Masjid Kita</a>
+    <nav className="bg-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex-shrink-0 font-bold text-xl text-blue-600"
+          >
+            Masjid Nurul Huda
+          </Link>
 
-        <ul className="nav-menu">
-          {navItems.map((item, index) => (
-            <li key={index} className="nav-item">
-              <Link to={item.href}>{item.name}</Link>
-            </li>
-          ))}
-        </ul>
-
-        {session ? (
-          <div className="relative" ref={dropdownRef}>
-            {/* Account Button */}
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-full font-medium transition focus:outline-none"
-            >
-              <span className="max-w-[100px] truncate">{session.user?.name || "Akaun"}</span>
-              <svg 
-                className={`w-4 h-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-50">
-                
-                {/* Conditional Admin Link */}
-                {isAdmin && (
-                  <Link
-                    to="/admin"
-                    onClick={() => setIsDropdownOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center ml-auto gap-12">
+            <ul className="flex gap-10">
+              {navItems.map((item, index) => (
+                <li key={index}>
+                  <NavLink
+                    to={item.href}
+                    className={({ isActive }) =>
+                      `font-medium transition ${isActive ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-700 hover:text-blue-600"}`
+                    }
                   >
-                    Admin Dashboard
-                  </Link>
-                )}
+                    {item.name}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
 
-                {/* User Settings */}
-                <Link
-                  to="/settings"
-                  onClick={() => setIsDropdownOpen(false)}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Tetapan Akaun
-                </Link>
-
-                <div className="border-t border-gray-100 my-1"></div>
-
-                {/* Logout Button */}
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-sm text-red-600 font-medium hover:bg-red-50 transition-colors"
-                >
-                  Log Keluar
-                </button>
-              </div>
+            {session?.user ? (
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full font-medium transition"
+              >
+                Log Keluar
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-medium transition"
+              >
+                Log Masuk
+              </Link>
             )}
           </div>
-        ) : (
-          <Link
-            to="/login"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-medium transition"
-          >
-            Log Masuk
-          </Link>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center gap-4">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden text-gray-700 hover:text-blue-600"
+            >
+              {isMenuOpen ? (
+                <XMarkIcon className="w-6 h-6" />
+              ) : (
+                <Bars3Icon className="w-6 h-6" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden pb-4">
+            <ul className="flex flex-col gap-2">
+              {navItems.map((item, index) => (
+                <li key={index}>
+                  <NavLink
+                    to={item.href}
+                    onClick={handleNavClick}
+                    className={({ isActive }) =>
+                      `block px-4 py-2 rounded font-medium transition ${
+                        isActive
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-700 hover:bg-blue-50"
+                      }`
+                    }
+                  >
+                    {item.name}
+                  </NavLink>
+                </li>
+              ))}
+
+              <li className="px-4 pt-2">
+                {session?.user ? (
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded font-medium transition"
+                  >
+                    Log Keluar
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={handleNavClick}
+                    className="block w-full text-center text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded font-medium transition"
+                  >
+                    Log Masuk
+                  </Link>
+                )}
+              </li>
+            </ul>
+          </div>
         )}
       </div>
     </nav>

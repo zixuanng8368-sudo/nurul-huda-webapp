@@ -26,7 +26,8 @@ const SettingsManagement = () => {
           setCurrentPassword("");
           setNewPassword("");
         },
-        onError: (ctx) => alert(ctx.error.message || "Failed to update password.")
+        // Added : any here to fix the TypeScript error
+        onError: (ctx: any) => alert(ctx.error.message || "Failed to update password.")
       });
     } finally {
       setIsChangingPassword(false);

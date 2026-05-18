@@ -1,6 +1,6 @@
-import AdminDashboard from "../components/AdminDashboard";
-import { authClient } from "../lib/auth-client";
 import { Link } from "react-router-dom";
+import AdminDashboard from "../../components/AdminDashboard";
+import { authClient } from "../../lib/auth-client";
 
 const AdminPage = () => {
   // 1. Fetch the current session
