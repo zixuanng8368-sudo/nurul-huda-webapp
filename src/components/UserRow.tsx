@@ -17,11 +17,11 @@ export default function UserRow({
   user,
   selfId,
   refetchUsers,
-}: {
+}: Readonly<{
   user: UserWithRole;
   selfId: string;
   refetchUsers: () => void;
-}) {
+}>) {
   const isSelf = user.id === selfId;
   const navigate = useNavigate();
   
@@ -44,7 +44,8 @@ export default function UserRow({
     await authClient.admin.impersonateUser(
       { userId: user.id },
       {
-        onError: (error) => alert(error.error.message || "Failed to impersonate"),
+        // Added : any type to fix TS7006
+        onError: (error: any) => alert(error.error.message || "Failed to impersonate"),
         onSuccess: () => {
           setIsMenuOpen(false);
           navigate("/"); // Redirect to home after impersonating
@@ -57,7 +58,8 @@ export default function UserRow({
     await authClient.admin.revokeUserSessions(
       { userId: user.id },
       {
-        onError: (error) => alert(error.error.message || "Failed to revoke sessions"),
+        // Added : any type to fix TS7006
+        onError: (error: any) => alert(error.error.message || "Failed to revoke sessions"),
         onSuccess: () => {
           alert("User sessions revoked");
           setIsMenuOpen(false);
@@ -70,7 +72,8 @@ export default function UserRow({
     await authClient.admin.unbanUser(
       { userId: user.id },
       {
-        onError: (error) => alert(error.error.message || "Failed to unban user"),
+        // Added : any type to fix TS7006
+        onError: (error: any) => alert(error.error.message || "Failed to unban user"),
         onSuccess: () => {
           refetchUsers();
           setIsMenuOpen(false);
@@ -83,7 +86,8 @@ export default function UserRow({
     await authClient.admin.banUser(
       { userId: user.id },
       {
-        onError: (error) => alert(error.error.message || "Failed to ban user"),
+        // Added : any type to fix TS7006
+        onError: (error: any) => alert(error.error.message || "Failed to ban user"),
         onSuccess: () => {
           refetchUsers();
           setIsMenuOpen(false);
@@ -96,7 +100,8 @@ export default function UserRow({
     await authClient.admin.removeUser(
       { userId: user.id },
       {
-        onError: (error) => alert(error.error.message || "Failed to remove user"),
+        // Added : any type to fix TS7006
+        onError: (error: any) => alert(error.error.message || "Failed to remove user"),
         onSuccess: () => {
           setIsDeleteDialogOpen(false);
           refetchUsers();
